@@ -1,0 +1,32 @@
+resource "aws_instance" "terraform" {
+  count                  = 4
+  ami                    = "ami-09c813fb71547fc4f"
+  instance_type          = "t3.micro"
+  vpc_security_group_ids = [aws_security_group.allow_all_traffic.id]
+  tags = {
+    Name      = var.instance_count[count.index]
+    Terraform = "true"
+  }
+}
+resource "aws_security_group" "allow_all_traffic" {
+  name = "allow_all_traffic"
+  # ... other configuration ...
+  tags = {
+
+    name  = "terraformSG"
+    value = "terraform"
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
